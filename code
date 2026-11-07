@@ -1,0 +1,191 @@
+Here's the prototype-
+# College Attendance Shortage Predictor
+
+REQUIRED = 75
+subjects = []
+
+
+def get_number(message):
+    value = input(message).strip()
+    while not value.isdigit():
+        print("Invalid input. Please enter a whole number.")
+        value = input(message).strip()
+    return int(value)
+
+
+def calculate_percentage(held, attended):
+    return attended * 100 / held
+
+
+def predict(held, attended):
+    percent = calculate_percentage(held, attended)
+
+    if percent < REQUIRED:
+        needed = -(-(REQUIRED * held - 100 * attended)
+                   // (100 - REQUIRED))
+        return "SHORTAGE", needed
+
+    missable = (100 * attended - REQUIRED * held) // REQUIRED
+    return "SAFE", missable
+
+
+def add_subject():
+    print("\n--- Add Subject ---")
+
+    name = input("Enter subject name: ").strip()
+    held = get_number("Enter total classes held: ")
+    attended = get_number("Enter classes attended: ")
+
+    if held == 0:
+        print("Total classes held must be greater than 0.")
+        return
+
+    if attended > held:
+        print("Attended classes cannot be more than classes held.")
+        return
+
+    subjects.append([name, held, attended])
+    print("Subject added successfully!")
+
+
+def view_subjects():
+    print("\n--- Attendance Records ---")
+
+    if len(subjects) == 0:
+        print("No subjects added.")
+    else:
+        for i, sub in enumerate(subjects, start=1):
+            percent = calculate_percentage(sub[1], sub[2])
+
+            print(
+                f"{i}. Subject: {sub[0]}, "
+                f"Held: {sub[1]}, "
+                f"Attended: {sub[2]}, "
+                f"Attendance: {percent:.2f}%"
+            )
+
+
+def select_subject():
+    if len(subjects) == 0:
+        print("No subjects added.")
+        return None
+
+    number = get_number("Enter subject number: ")
+
+    if number < 1 or number > len(subjects):
+        print("Invalid subject number.")
+        return None
+
+    return subjects[number - 1]
+
+
+def predict_subject():
+    print("\n--- Predict Attendance Shortage ---")
+
+    sub = select_subject()
+
+    if sub is None:
+        return
+
+    percent = calculate_percentage(sub[1], sub[2])
+    status, count = predict(sub[1], sub[2])
+
+    print(f"Subject: {sub[0]}")
+    print(f"Current attendance: {percent:.2f}%")
+
+    if status == "SHORTAGE":
+        print(
+            "Attendance shortage! Attend the next "
+            f"{count} classes continuously to reach {REQUIRED}%."
+        )
+    else:
+        print(
+            "Attendance is safe. You can miss up to "
+            f"{count} more classes and stay above {REQUIRED}%."
+        )
+
+
+def predict_after_missing():
+    print("\n--- Attendance After Missing Classes ---")
+
+    sub = select_subject()
+
+    if sub is None:
+        return
+
+    miss = get_number("Enter number of classes to miss: ")
+
+    new_held = sub[1] + miss
+    new_percent = calculate_percentage(new_held, sub[2])
+
+    print(f"Subject: {sub[0]}")
+    print(
+        f"Attendance after missing {miss} classes: "
+        f"{new_percent:.2f}%"
+    )
+
+    if new_percent < REQUIRED:
+        print("Warning: You will fall below the required "
+              f"{REQUIRED}%.")
+    else:
+        print("You will still meet the required "
+              f"{REQUIRED}%.")
+
+
+def shortage_report():
+    print("\n--- Shortage Report ---")
+
+    found = False
+
+    for sub in subjects:
+        status, count = predict(sub[1], sub[2])
+
+        if status == "SHORTAGE":
+            percent = calculate_percentage(sub[1], sub[2])
+
+            print(
+                f"{sub[0]}: {percent:.2f}% - "
+                f"attend next {count} classes"
+            )
+            found = True
+
+    if not found:
+        print("No subjects with attendance shortage.")
+
+
+def main():
+    while True:
+        print("\n===== ATTENDANCE SHORTAGE PREDICTOR =====")
+        print("1. Add Subject")
+        print("2. View Attendance")
+        print("3. Predict Shortage for a Subject")
+        print("4. Predict After Missing Classes")
+        print("5. Show Shortage Report")
+        print("6. Exit")
+
+        choice = input("Enter your choice: ").strip()
+
+        if choice == "1":
+            add_subject()
+        elif choice == "2":
+            view_subjects()
+        elif choice == "3":
+            predict_subject()
+        elif choice == "4":
+            predict_after_missing()
+        elif choice == "5":
+            shortage_report()
+        elif choice == "6":
+            print(
+                "Thank you for using "
+                "the Attendance Shortage Predictor!"
+            )
+            break
+        else:
+            print(
+                "Invalid choice. "
+                "Please enter a number from 1 to 6."
+            )
+
+
+main()
