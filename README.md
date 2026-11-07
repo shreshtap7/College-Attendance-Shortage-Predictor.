@@ -27,24 +27,7 @@ Attendance % = (Classes Attended x 100) / Classes Held
 
 - Python 3 (no external libraries)
 
-## Getting Started
-
-1. Install Python 3.
-2. Clone this repository.
-3. Run: `python attendance_predictor.py`
-4. Follow the on-screen menu.
-
 ## Social Impact
 
 Built for our *Compassion in Action* project, this tool reduces the stress of attendance shortages. It helps students avoid being barred from exams and especially supports those who miss classes due to illness or personal circumstances by showing exactly how much they need to recover.
 
-## Future Scope
-
-- Save records to a file or database
-- Graphical or web interface
-- Configurable minimum percentage
-- Automatic alerts when attendance nears the limit
-
-## Contributors
-
-- Add your team members' names here
